@@ -16,7 +16,6 @@
 #include <nav_msgs/Odometry.h>
 // #include <tf/transform_broadcaster.h>
 #include <tf2_ros/transform_broadcaster.h>
-
 #include "scout_msgs/ScoutLightCmd.h"
 #include "scout_sdk/scout_base.hpp"
 

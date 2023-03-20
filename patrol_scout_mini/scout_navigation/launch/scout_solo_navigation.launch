@@ -15,7 +15,7 @@
     <arg name="localization"      default="true"/>
         
     <!-- rs-l515_and_t265.launch need to be created in a realsense2-camera pkg -->
-    <include file="$(find realsense2_camera)/launch/rs_l515_and_t265.launch">
+    <!-- <include file="$(find realsense2_camera)/launch/rs_l515_and_t265.launch">
             <arg name="device_type_camera1"             value="$(arg device_type_camera1)"/>
             <arg name="device_type_camera2"             value="$(arg device_type_camera2)"/>
             <arg name="serial_no_camera1"               value="$(arg serial_no_camera1)"/>
@@ -23,10 +23,10 @@
             <arg name="camera1"                         value="$(arg camera1)"/>
             <arg name="camera2"                         value="$(arg camera2)"/>
             <arg name="clip_distance"                   value="$(arg clip_distance)"/>
-    </include>
+    </include> -->
 
   <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan_node">
-        <remap from="cloud_in" to="/l515/depth/color/points" />
+        <remap from="/laser" to="/scan" />
 
         <!-- <param name="min_height" value="0.3"/> 
         <param name="max_height" value="0.3"/> -->
@@ -36,6 +36,7 @@
         <!-- publish는 scan으로 다시 내보내줌 , from과 to가 헤깔리지만 from이 노드에서 서브스크라이브 함-->
   </node>
 
+  
   <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_node">
         <param name="use_mag" value="true"/>
         <param name="publish_tf" value="false"/>
@@ -58,8 +59,8 @@
   
   <!-- 베이스링크와 맵을 연결해서 tf-tree가 완성되고 모델도 잘 나오게 된다. -->
   <node pkg="tf" type="static_transform_publisher" name="base_link_to_map" args="0 0 0 0 0 0 /base_link /map 100"/>
-  <node pkg="tf" type="static_transform_publisher" name="base_link_to_t265_link" args="0.2 0 0.18 0 0 0 /base_link /t265_link 30"/>
-  <node pkg="tf" type="static_transform_publisher" name="base_link_to_l515_link" args="0.2 0 0.18 0 0 0 /base_link /l515_link 30"/>
+  <!-- <node pkg="tf" type="static_transform_publisher" name="base_link_to_t265_link" args="0.2 0 0.18 0 0 0 /base_link /t265_link 30"/>
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_l515_link" args="0.2 0 0.18 0 0 0 /base_link /l515_link 30"/> -->
 
 
   <!-- Map server -->
@@ -75,7 +76,7 @@
     <!-- <arg name="model" value="$(arg model)" /> -->
     <arg name="move_forward_only" value="$(arg move_forward_only)"/>
   </include>
-  <remap from="/rtabmap/grid_map" to="/map"/>
+  <!-- <remap from="/rtabmap/grid_map" to="/map"/> -->
 
   <!-- 실제 구동할 수 있게 scout-mini 불러오기 -->
   <include file="$(find scout_bringup)/launch/scout_minimal.launch" />
