@@ -1,0 +1,19 @@
+<launch>
+    <!-- <node pkg="kobuki_tf" type="kobuki_tf" name="kobuki_tf" output="screen"> -->
+    <node pkg="scout_messenger" type="scout_messenger" name="scout_messenger" output="screen">
+    </node>
+        <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
+                 <remap from="scan" to="scan"/>
+                 <param name="odom_frame" value="odom"/>
+                 <param name="map_frame" value="map"/>
+                 <param name="base_link" value="base_link"/>
+                 <rosparam command="load" file="$(find turtlebot3_slam)/config/gmapping_params.yaml" />
+        </node>
+        <!-- <node pkg="gmapping" type="slam_gmapping" name="gmapping" output="screen">
+            <param name="map_frame" value="map"/>
+            <param name="base_frame" value="chasis"/> 
+            <param name="odom_frame" value="odom"/> 
+        </node> -->
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find scout_description)/rviz/mapping.rviz"/>
+</launch>
+
