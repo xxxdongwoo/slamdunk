@@ -11,21 +11,23 @@ from fastapi import Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from fastapi.responses import StreamingResponse
-
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
-cap = cv2.VideoCapture(0)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+cap = cv2.VideoCapture(2)
 
 # Model
 # model = torch.hub.load('ultralytics/yolov5', 'yolov5s', device='cpu', force_reload=True)
-model = torch.hub.load('../', 'custom','../0322_custom/exp/weights/best.pt', source='local', device='cpu', force_reload=True)
+model = torch.hub.load('/home/tesless/slamdunk/yolov5/', 'custom','/home/tesless/slamdunk/0322_custom_weights/exp/weights/best.pt', source='local', device='cpu', force_reload=True)
 
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 def video_show(request: Request):
-    return templates.TemplateResponse("video_show.html",{"request": request})
+    return templates.TemplateResponse("simple_gui.html",{"request": request})
 
 def gen_frames():
     while True:
