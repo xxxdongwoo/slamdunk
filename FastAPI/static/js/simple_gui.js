@@ -59,7 +59,7 @@ var isTouchDevice = 'ontouchstart' in document.documentElement;
 var shiftKey = false;
 
 // The topic on which to publish Twist messages
-var cmdVelTopic = "/cmd_vel_mux/input/teleop";
+var cmdVelTopic = "/cmd_vel";
 
 // Default linear and angular speed
 var defaultLinearSpeed = 0.2;
