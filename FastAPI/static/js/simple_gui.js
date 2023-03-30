@@ -1,21 +1,21 @@
 /*  simple_gui.js - Version 1.0 2013-09-29
 
-    A simple HTML5/rosbridge script to control and monitor a ROS robot
+	A simple HTML5/rosbridge script to control and monitor a ROS robot
 
-    Created for the Pi Robot Project: http://www.pirobot.org
-    Copyright (c) 2013 Patrick Goebel.  All rights reserved.
+	Created for the Pi Robot Project: http://www.pirobot.org
+	Copyright (c) 2013 Patrick Goebel.  All rights reserved.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.5
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.5
     
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details at:
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details at:
     
-    http://www.gnu.org/licenses/gpl.html
+	http://www.gnu.org/licenses/gpl.html
  */
 
 // Set the rosbridge and mjpeg_server port
@@ -105,57 +105,57 @@ var ros = new ROSLIB.Ros();
 // Connect to ROS
 function init_ros() {
 	ros.connect(serverURL);
-	
+
 	// Set the rosbridge host and port values in the form
 	document.getElementById("rosbridgeHost").value = rosbridgeHost;
 	document.getElementById("rosbridgePort").value = rosbridgePort;
 }
 
 // If there is an error on the back end, an 'error' emit will be emitted.
-ros.on('error', function(error) {
+ros.on('error', function (error) {
 	console.log("Rosbridge Error: " + error);
 });
 
 // Wait until a connection is made before continuing
-ros.on('connection', function() {
+ros.on('connection', function () {
 	console.log('Rosbridge connected.');
 
 	// Create a Param object for the video topic
 	var videoTopicParam = new ROSLIB.Param({
-		ros : ros,
-		name : param_ns + '/videoTopic'
+		ros: ros,
+		name: param_ns + '/videoTopic'
 	});
 
-	videoTopicParam.get(function(value) {
-	    if (value != null) {
-		videoTopic = value;
-	    }
-		
-	    // Create the video viewer
-	    if (!mjpegViewer) {
-		mjpegViewer = new MJPEGCANVAS.Viewer({
-		    divID : 'videoCanvas',
-		    host : mjpegHost,
-		    port : mjpegPort,
-		    width : videoWidth,
-		    height : videoHeight,
-		    quality : videoQuality,
-		    topic : videoTopic
-		});
-	    }
+	videoTopicParam.get(function (value) {
+		if (value != null) {
+			videoTopic = value;
+		}
+
+		// Create the video viewer
+		if (!mjpegViewer) {
+			mjpegViewer = new MJPEGCANVAS.Viewer({
+				divID: 'videoCanvas',
+				host: mjpegHost,
+				port: mjpegPort,
+				width: videoWidth,
+				height: videoHeight,
+				quality: videoQuality,
+				topic: "/camera/rgb/image_raw"
+			});
+		}
 	});
 
 	// Create a Param object for the max linear speed
 	var maxLinearSpeedParam = new ROSLIB.Param({
-		ros : ros,
-		name : param_ns + '/maxLinearSpeed'
+		ros: ros,
+		name: param_ns + '/maxLinearSpeed'
 	});
 
 	// Get the value of the max linear speed paramater
-	maxLinearSpeedParam.get(function(value) {
+	maxLinearSpeedParam.get(function (value) {
 		if (value != null) {
 			maxLinearSpeed = value;
-						
+
 			// Update the value on the GUI
 			var element = document.getElementById('maxLinearSpeed');
 			element.setAttribute("max", maxLinearSpeed);
@@ -167,15 +167,15 @@ ros.on('connection', function() {
 
 	// Create a Param object for the max angular speed
 	var maxAngularSpeedParam = new ROSLIB.Param({
-		ros : ros,
-		name : param_ns + '/maxAngularSpeed'
+		ros: ros,
+		name: param_ns + '/maxAngularSpeed'
 	});
 
 	// Get the value of the max angular speed paramater
-	maxAngularSpeedParam.get(function(value) {
+	maxAngularSpeedParam.get(function (value) {
 		if (value != null) {
 			maxAngularSpeed = value;
-			
+
 			// Update the value on the GUI
 			var element = document.getElementById('maxAngularSpeed');
 			element.setAttribute("max", maxAngularSpeed);
@@ -184,21 +184,21 @@ ros.on('connection', function() {
 			writeStatusMessage('maxAngularSpeedDisplay', maxAngularSpeed.toFixed(2));
 		}
 	});
-	
+
 	// Create the chatter topic and publisher
 	chatterTopic = new ROSLIB.Topic({
-		ros : ros,
-		name : '/chatter',
-		messageType : 'std_msgs/String',
+		ros: ros,
+		name: '/chatter',
+		messageType: 'std_msgs/String',
 	});
-	
+
 	// Create the chatter message
 	var message = document.getElementById('chatterMessage');
 	chatterMsg = new ROSLIB.Message({
-		data : message.value
+		data: message.value
 	});
 
-	document.addEventListener('keydown', function(e) {
+	document.addEventListener('keydown', function (e) {
 		if (e.shiftKey)
 			shiftKey = true;
 		else
@@ -206,24 +206,24 @@ ros.on('connection', function() {
 		setSpeed(e.keyCode);
 	}, true);
 
-	document.addEventListener('keyup', function(e) {
+	document.addEventListener('keyup', function (e) {
 		if (!e.shiftKey) {
 			shiftKey = false;
 			stopRobot();
 		}
-	}, true);	
+	}, true);
 
 	// Display a line of instructions on how to move the robot
 	if (isTouchDevice) {
 		// Set the Nav instructions appropriately for touch
 		var navLabel = document.getElementById("navInstructions");
 		navLabel.innerHTML = "Tap an arrow to move the robot";
-		
+
 		// Hide the publish/subscribe rows on touch devices
 		var pubSubBlock = document.getElementById("pubSubBlock");
 		pubSubBlock.style.visibility = 'hidden';
 	}
-	else { 
+	else {
 		// Set the Nav instructions appropriately for mousing
 		var navLabel = document.getElementById("navInstructions");
 		navLabel.innerHTML = "Hold down SHIFT Key when clicking arrows";
@@ -247,15 +247,15 @@ function updateChatterMsg(msg) {
 function refreshPublishers() {
 	// Keep the /cmd_vel messages alive
 	pubCmdVel();
-		
+
 	if (chatterTopic.isAdvertised)
 		chatterTopic.publish(chatterMsg);
 }
 
 var cmdVelPub = new ROSLIB.Topic({
-	ros : ros,
-	name : cmdVelTopic,
-	messageType : 'geometry_msgs/Twist'
+	ros: ros,
+	name: cmdVelTopic,
+	messageType: 'geometry_msgs/Twist'
 });
 
 function pubCmdVel() {
@@ -268,18 +268,18 @@ function pubCmdVel() {
 	}
 
 	var cmdVelMsg = new ROSLIB.Message({
-		linear : {
-			x : vx,
-			y : 0.0,
-			z : 0.0
+		linear: {
+			x: vx,
+			y: 0.0,
+			z: 0.0
 		},
-		angular : {
-			x : 0.0,
-			y : 0.0,
-			z : vz
+		angular: {
+			x: 0.0,
+			y: 0.0,
+			z: vz
 		}
 	});
-	
+
 	var statusMessage = "vx: " + vx.toFixed(2) + " vz: " + vz.toFixed(2);
 	writeStatusMessage('cmdVelStatusMessage', statusMessage);
 
@@ -325,7 +325,7 @@ function stopRobot() {
 }
 
 function timedStopRobot() {
-    stopHandle = setTimeout(function() { stopRobot() }, 1000);
+	stopHandle = setTimeout(function () { stopRobot() }, 1000);
 }
 
 function clearTimedStop() {
@@ -339,7 +339,7 @@ function subChatter() {
 
 	if (subscribe) {
 		console.log('Subscribed to ' + listener.name);
-		listener.subscribe(function(msg) {
+		listener.subscribe(function (msg) {
 			chatterData.value = msg.data;
 		});
 	} else {
@@ -352,26 +352,26 @@ function setROSParam() {
 	var paramName = document.getElementById('setParamName');
 	var paramValue = document.getElementById('setParamValue');
 	var param = new ROSLIB.Param({
-		ros : ros,
-		name : paramName.value
+		ros: ros,
+		name: paramName.value
 	});
-	
-    if (isNumeric(paramValue.value)) {
+
+	if (isNumeric(paramValue.value)) {
 		param.set(parseFloat(paramValue.value));
-    }
-    else {
-    	param.set(paramValue.value);
-    }
+	}
+	else {
+		param.set(paramValue.value);
+	}
 }
 
 function getROSParam() {
 	var paramName = document.getElementById('getParamName');
 	var paramValue = document.getElementById('getParamValue');
 	var param = new ROSLIB.Param({
-		ros : ros,
-		name : paramName.value
+		ros: ros,
+		name: paramName.value
 	});
-	param.get(function(value) {
+	param.get(function (value) {
 		paramValue.value = value;
 	});
 }
@@ -437,5 +437,5 @@ function sign(x) {
 }
 
 function isNumeric(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
+	return !isNaN(parseFloat(n)) && isFinite(n);
 }
