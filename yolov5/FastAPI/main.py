@@ -19,7 +19,9 @@ cap = cv2.VideoCapture(0)
 
 # Model
 # model = torch.hub.load('ultralytics/yolov5', 'yolov5s', device='cpu', force_reload=True)
-model = torch.hub.load('../', 'custom','../0322_custom/exp/weights/best.pt', source='local', device='cpu', force_reload=True)
+model = torch.hub.load('../', 'custom','../0328_custom/exp/weights/best.pt', 
+                       source='local', device='cpu', force_reload=True)
+#model 변경하는 부분에서 많은 Error가 발생, local dataset을 이용시 많은 조건을 수정 필요 
 
 templates = Jinja2Templates(directory="templates")
 
