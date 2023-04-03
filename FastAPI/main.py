@@ -14,6 +14,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.responses import StreamingResponse
 import json
 import telegram
+import webbrowser
 
 bot = telegram.Bot(token='6007372301:AAEZWipCHU_oaQV7a1Kh_0Ig-ZARlPHjHjs')
 chat_id =6102779631
@@ -41,17 +42,21 @@ async def gen_frames():
     pre_num_smoke = 0   # 이전 비디오에서 발견된 연기 수를 저장할 변수 초기화
     pre_num_fire = 0    # 이전 비디오에서 발견된 불 수를 저장할 변수 초기화
     frame_num = 0       # 이전 비디오 개수 저장할 변수 초기화 
-
+    #print("SLAMDUNK 경비 순찰 시작합니다")
+    #bot.send_message(chat_id, text="SLAMDUNK 경비 순찰 시작합니다\n")
     async def print_message(frame_num):
         message =""
         nonlocal pre_num_persons, pre_num_fire, pre_num_smoke
-
+        #if frame_num == 0: # 프레임 번호가 0일때만 "SLAMDUNK 경비 순찰 시작합니다" 메시지 전송
+        #    await bot.send_message(chat_id, text="SLAMDUNK 경비 순찰 시작합니다")
         if frame_num % 3000 == 0: # 대략적으로 5분에 한번 문자오는듯 ,현재 프레임 번호가 3000 배수일때 문자전송
             message = "SLAMDUNK 경비 순찰 중 입니다.\n"
-        # 이전 프레임 ,객체의 개수가 바뀌어야만 문자알림 전송, 안그러면 많은 문자가 중복되어 쌓이게 됨, 같은 객체를 인식하고 반복적으로 문자를 보내는것을 막기위함 
+        # 이전 프레임 ,객체의 개수가 바뀌어야만 문자알림 전송, 안그러면 많은 문자가 중복되어 쌓이게 됨,
+        # 같은 객체를 인식하고 반복적으로 문자를 보내는것을 막기위함 
         if num_persons != pre_num_persons or num_smoke != pre_num_smoke or num_fire != pre_num_fire:
-            if num_persons > 0 and num_persons != pre_num_persons:
+            if num_persons > 0 and num_persons != pre_num_persons == 0:
                 message += f"사람이 {num_persons}명 확인 되었습니다.\nQR코드를 확인 합니다.\n"
+                webbrowser.open("https://webqr.com/index.html")
                 pre_num_persons = num_persons
             if num_smoke > 0 and num_smoke != pre_num_smoke:
                 message += f"연기가 {num_smoke}곳 에서 발견 되었습니다.\n지금 바로 확인 바랍니다\n"
@@ -63,7 +68,7 @@ async def gen_frames():
         if message:
             await bot.send_message(chat_id, text=message)
 
-    while True: #무한 반복  
+    while True:   
         _, frame = cap.read()
         frame_num += 1
         if not _:
@@ -76,7 +81,7 @@ async def gen_frames():
 
             if results and results.pandas().xyxy[0] is not None:
                 resulting_json = json.loads(results.pandas().xyxy[0].to_json(orient="records"))
-                num_persons = len([d for d in resulting_json if d["confidence"] >= 0.75 and d["name"] == "person"]) #사람은 기준점 75%를 넘어야 문자가 오도록 설계
+                num_persons = len([d for d in resulting_json if d["confidence"] >= 0.75 and d["name"] == "person"]) #사람은 기준점 75%를 넘어야 문자
                 num_smoke = len([d for d in resulting_json if d["name"] == "smoke"]) # 연기는 기준점없이 문자 알람
                 num_fire = len([d for d in resulting_json if d["name"] == "fire"])  # 불 도 기준점 없이 문자 알람 
 
