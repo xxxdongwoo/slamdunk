@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+names: ['Fire', 'Smoke', 'fire']
+
+roboflow:
+  workspace: fyp-lohju
+  project: fire-dataset-m2gaq
+  version: 6
+  license: MIT
+  url: https://universe.roboflow.com/fyp-lohju/fire-dataset-m2gaq/dataset/6
