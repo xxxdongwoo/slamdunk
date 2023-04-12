@@ -6,3 +6,5 @@ fire인식 server에서만 못함
 0405합친 기록 notion에 기록
 
 0411 notion 레퍼런스 다시 확인.. 12일에 바로 찾아보고 수정해볼것
+
+0412 /usb_cam/image_raw node 불러와서 fastapi에서 영상 송출 완료/ 객체인식이 불가
